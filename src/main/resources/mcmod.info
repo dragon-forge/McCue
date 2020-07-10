@@ -1,0 +1,11 @@
+[
+	{
+	  "modid": "mccue",
+	  "name": "Mc Cue",
+	  "description": "Corsair RGB support to minecraft!",
+	  "version": "${version}",
+	  "mcversion": "${mcversion}",
+	  "authorList": ["Zeitheron"],
+	  "logoFile": "assets/mccue/textures/logo.png"
+	}
+]
