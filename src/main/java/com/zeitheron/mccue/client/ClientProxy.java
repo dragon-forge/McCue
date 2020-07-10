@@ -130,7 +130,7 @@ public class ClientProxy
 			}
 			this.lbtn = mccue = new GuiButton(438963, controls.x + controls.width + 4, controls.y, 20, 20, "McCue")
 			{
-
+				@Override
 				public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks)
 				{
 					if(this.visible)
@@ -157,7 +157,7 @@ public class ClientProxy
 						{
 							j = 16777120;
 						}
-						if(RgbSdkRegistry.SDKS.stream().map(sdk -> sdk.calibrations()).filter(ICalibrations::hasMoreCalibrations).findFirst().isPresent())
+						if(RgbSdkRegistry.SDKS.stream().map(IBaseSDK::calibrations).anyMatch(ICalibrations::hasMoreCalibrations))
 						{
 							GlStateManager.pushMatrix();
 							GlStateManager.translate(0.0f, (float) Math.sin(Math.toRadians((float) (System.currentTimeMillis() % 1800L) / 10.0f)) * 4.0f, 0.0f);
@@ -174,6 +174,7 @@ public class ClientProxy
 					}
 				}
 			};
+
 			e.getButtonList().add(mccue);
 			mccue.enabled = !RgbSdkRegistry.SDKS.isEmpty();
 		}

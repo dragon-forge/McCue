@@ -5,6 +5,7 @@ import com.zeitheron.mccue.McCue;
 import com.zeitheron.mccue.api.KnownRGBSDK;
 import com.zeitheron.mccue.api.sdk.ICalibrations;
 import com.zeitheron.mccue.api.sdk.IRgbDispatcher;
+import com.zeitheron.mccue.api.sdk.SDKControlStack;
 import com.zeitheron.mccue.client.sdk.corsair.icue.jna.*;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -273,6 +274,23 @@ public class CueSDK
 	public ResourceLocation getSdkId()
 	{
 		return this.id;
+	}
+
+	SDKControlStack theStack;
+
+	@Override
+	public SDKControlStack getActiveStack()
+	{
+		return theStack;
+	}
+
+	@Override
+	public void setActiveStack(SDKControlStack stack)
+	{
+		if(theStack == null)
+			theStack = stack;
+		else if(stack == null && theStack.isClosed())
+			theStack = null;
 	}
 
 	public static class ICueSDKColorSink

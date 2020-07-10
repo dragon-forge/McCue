@@ -47,7 +47,12 @@ public class ICueRgbDispatcher
 	@Override
 	public void tick()
 	{
-		if(!mode.enableEvents()) return;
+		if(!mode.enableEvents())
+		{
+			ACTIVE_LED.clear();
+			QUEUE_LED.clear();
+			return;
+		}
 
 		ACTIVE_LED.keySet().removeIf(id ->
 		{
@@ -79,10 +84,15 @@ public class ICueRgbDispatcher
 	@Override
 	public void updateRgb()
 	{
-		if(ACTIVE_LED.isEmpty())
+		if(!mode.enableEvents())
 		{
+			ACTIVE_LED.clear();
+			QUEUE_LED.clear();
 			return;
 		}
+
+		if(ACTIVE_LED.isEmpty()) return;
+
 		ACTIVE_LED.values().forEach(task ->
 		{
 			if(task != null)
@@ -90,12 +100,16 @@ public class ICueRgbDispatcher
 				task.updateColor();
 			}
 		});
+
 		this.sdk.flushLedQueue();
 	}
 
 	@Override
 	public void addTask(RgbTask task)
 	{
+		// do not even accept tasks
+		if(!mode.enableEvents()) return;
+
 		CueSDK.ICueSDKColorSink sink = (CueSDK.ICueSDKColorSink) task.colorSink;
 		LedId id = sink.id;
 		QUEUE_LED.put(id, task);
@@ -125,4 +139,3 @@ public class ICueRgbDispatcher
 		return mode;
 	}
 }
-
