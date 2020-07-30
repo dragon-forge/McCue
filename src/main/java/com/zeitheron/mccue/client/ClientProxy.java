@@ -1,5 +1,6 @@
 package com.zeitheron.mccue.client;
 
+import com.zeitheron.hammercore.cfg.file1132.Configuration;
 import com.zeitheron.hammercore.client.utils.UV;
 import com.zeitheron.hammercore.client.utils.UtilsFX;
 import com.zeitheron.hammercore.utils.color.ColorHelper;
@@ -62,15 +63,15 @@ public class ClientProxy
 	@Override
 	public void a()
 	{
-		RgbSdkRegistry.registerSDK(() ->
+		RgbSdkRegistry.registerSDK(cfg ->
 		{
-			CueSDK sdk = new CueSDK(true);
+			CueSDK sdk = new CueSDK(true, cfg);
 			return sdk.isActive() ? sdk : null;
 		});
 
-		RgbSdkRegistry.registerSDK(() ->
+		RgbSdkRegistry.registerSDK(cfg ->
 		{
-			LogiLED sdk = new LogiLED();
+			LogiLED sdk = new LogiLED(cfg);
 			return sdk.isActive() ? sdk : null;
 		});
 
@@ -90,6 +91,10 @@ public class ClientProxy
 	public void b()
 	{
 		RgbRegistry.masterReload();
+
+		Configuration cfg = new Configuration(new File(McCue.modCfgDir, "main.hlc"));
+		RgbSdkRegistry.init(cfg);
+		if(cfg.hasChanged()) cfg.save();
 
 		Thread thread = new Thread(() ->
 		{

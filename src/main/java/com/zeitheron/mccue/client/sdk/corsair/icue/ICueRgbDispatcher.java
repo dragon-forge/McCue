@@ -18,11 +18,11 @@ import java.util.*;
 public class ICueRgbDispatcher
 		implements IRgbDispatcher
 {
-	public static final Map<LedId, RgbTask> ACTIVE_LED = new HashMap<LedId, RgbTask>();
-	public static final Map<LedId, RgbTask> QUEUE_LED = new HashMap<LedId, RgbTask>();
-	final CueSDK sdk;
-	final Set<LedId> removedLT = new HashSet<LedId>();
-	final List<? extends IRGBPosition> allIds = Arrays.asList(LedId.values());
+	private static final Map<LedId, RgbTask> ACTIVE_LED = new HashMap<LedId, RgbTask>();
+	private static final Map<LedId, RgbTask> QUEUE_LED = new HashMap<LedId, RgbTask>();
+	private final CueSDK sdk;
+	private final Set<LedId> removedLT = new HashSet<>();
+	private final List<? extends IRGBPosition> allIds = Arrays.asList(LedId.values());
 	private EnumSDKMode mode = EnumSDKMode.EVENT_BASED;
 
 	public ICueRgbDispatcher(CueSDK sdk)
@@ -40,7 +40,12 @@ public class ICueRgbDispatcher
 	@Override
 	public void onTrigger(RgbTrigger trigger, @Nullable NBTTagCompound triggerInfo)
 	{
-		RgbRegistry.RGB_TASKS.stream().filter(entry -> entry.getTrigger() == trigger && entry.getSdk() == this.sdk && entry.getTrigger().triggerMatches(entry, triggerInfo)).map(RgbTaskEntry::createTask).filter(Predicates.notNull()).forEach(this::addTask);
+		RgbRegistry.RGB_TASKS
+				.stream()
+				.filter(entry -> entry.getTrigger() == trigger && entry.getSdk() == this.sdk && entry.getTrigger().triggerMatches(entry, triggerInfo))
+				.map(RgbTaskEntry::createTask)
+				.filter(Predicates.notNull())
+				.forEach(this::addTask);
 	}
 
 	@Override
@@ -71,12 +76,15 @@ public class ICueRgbDispatcher
 			}
 			return false;
 		});
+
 		this.removedLT.clear();
+
 		QUEUE_LED.keySet().stream().filter(id -> ACTIVE_LED.get(id) == null).forEach(id ->
 		{
 			ACTIVE_LED.put(id, QUEUE_LED.get(id));
 			this.removedLT.add(id);
 		});
+
 		this.removedLT.forEach(QUEUE_LED::remove);
 	}
 

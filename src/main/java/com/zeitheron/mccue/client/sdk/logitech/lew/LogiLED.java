@@ -1,11 +1,9 @@
 package com.zeitheron.mccue.client.sdk.logitech.lew;
 
+import com.zeitheron.hammercore.cfg.file1132.Configuration;
 import com.zeitheron.mccue.McCue;
 import com.zeitheron.mccue.api.KnownRGBSDK;
-import com.zeitheron.mccue.api.sdk.IBaseSDK;
-import com.zeitheron.mccue.api.sdk.ICalibrations;
-import com.zeitheron.mccue.api.sdk.IRgbDispatcher;
-import com.zeitheron.mccue.api.sdk.SDKControlStack;
+import com.zeitheron.mccue.api.sdk.*;
 import com.zeitheron.mccue.client.sdk.logitech.lew.jna.KeyName;
 import com.zeitheron.mccue.client.sdk.logitech.lew.jna.LogiLedLibrary;
 import net.minecraft.util.ResourceLocation;
@@ -21,10 +19,17 @@ public class LogiLED
 {
 	boolean active = true;
 	private final List<String> leds;
-	public final LogiRGBDispatcher dispatcher;
+	public final LogiRGBDispatcher dispatcher = new LogiRGBDispatcher(this);
 
-	public LogiLED()
+	public LogiLED(Configuration cfg)
 	{
+		if(!RgbSdkRegistry.enableSDK(cfg, this))
+		{
+			active = false;
+			this.leds = Collections.emptyList();
+			return;
+		}
+
 		List<String> leds = new ArrayList<>();
 		leds.add("2");
 		for(int key : KeyName.values())
@@ -43,8 +48,6 @@ public class LogiLED
 			active = false;
 			McCue.LOG.error("Failed to load Logitech RGB support", err);
 		}
-
-		this.dispatcher = new LogiRGBDispatcher(this);
 	}
 
 	@Override
@@ -124,10 +127,12 @@ public class LogiLED
 		public final LogiLED sdk;
 		public final int targetDevice;
 		public final int subidx;
+		public final String sid;
 
 		public LogiLEDColorSink(LogiLED sdk, String id)
 		{
 			this.sdk = sdk;
+			this.sid = id;
 
 			// for keyboards, a bit more complex handler
 			if(id.startsWith("4_"))

@@ -1,10 +1,12 @@
 package com.zeitheron.mccue.client.sdk.corsair.icue;
 
 import com.sun.jna.Pointer;
+import com.zeitheron.hammercore.cfg.file1132.Configuration;
 import com.zeitheron.mccue.McCue;
 import com.zeitheron.mccue.api.KnownRGBSDK;
 import com.zeitheron.mccue.api.sdk.ICalibrations;
 import com.zeitheron.mccue.api.sdk.IRgbDispatcher;
+import com.zeitheron.mccue.api.sdk.RgbSdkRegistry;
 import com.zeitheron.mccue.api.sdk.SDKControlStack;
 import com.zeitheron.mccue.client.sdk.corsair.icue.jna.*;
 import net.minecraft.client.resources.I18n;
@@ -29,13 +31,19 @@ public class CueSDK
 	List<LedColor> ledQueue = new ArrayList<LedColor>();
 	ResourceLocation id = KnownRGBSDK.CORSAIR_CUE;
 
-	public CueSDK()
+	public CueSDK(Configuration cfg)
 	{
-		this(false);
+		this(false, cfg);
 	}
 
-	public CueSDK(boolean exclusiveLightingControl)
+	public CueSDK(boolean exclusiveLightingControl, Configuration cfg)
 	{
+		if(!RgbSdkRegistry.enableSDK(cfg, this))
+		{
+			active = false;
+			return;
+		}
+
 		CorsairProtocolDetails.ByValue protocolDetails = this.instance.CorsairPerformProtocolHandshake();
 		if(protocolDetails.serverProtocolVersion == 0)
 			this.handleError();
