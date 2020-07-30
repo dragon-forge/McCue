@@ -90,11 +90,11 @@ public class ClientProxy
 	@Override
 	public void b()
 	{
-		RgbRegistry.masterReload();
-
 		Configuration cfg = new Configuration(new File(McCue.modCfgDir, "main.hlc"));
 		RgbSdkRegistry.init(cfg);
 		if(cfg.hasChanged()) cfg.save();
+
+		RgbRegistry.masterReload();
 
 		Thread thread = new Thread(() ->
 		{
