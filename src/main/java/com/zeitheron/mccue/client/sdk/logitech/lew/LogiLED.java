@@ -21,6 +21,7 @@ public class LogiLED
 {
 	boolean active = true;
 	private final List<String> leds;
+	public final LogiRGBDispatcher dispatcher;
 
 	public LogiLED()
 	{
@@ -42,6 +43,8 @@ public class LogiLED
 			active = false;
 			McCue.LOG.error("Failed to load Logitech RGB support", err);
 		}
+
+		this.dispatcher = new LogiRGBDispatcher(this);
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class LogiLED
 	@Override
 	public IRgbDispatcher getDispatcher()
 	{
-		return null;
+		return dispatcher;
 	}
 
 	@Override

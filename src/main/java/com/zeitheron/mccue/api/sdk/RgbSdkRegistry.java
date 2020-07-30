@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class RgbSdkRegistry
 {
-	public static final List<IBaseSDK> SDKS = new ArrayList<IBaseSDK>();
+	public static final List<IBaseSDK> SDKS = new ArrayList<>();
 	private static final Map<ResourceLocation, IBaseSDK> SDKMap = new HashMap<ResourceLocation, IBaseSDK>();
 
 	public static void registerSDK(Supplier<IBaseSDK> sdk)

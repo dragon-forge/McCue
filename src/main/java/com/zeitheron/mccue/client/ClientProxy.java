@@ -15,11 +15,11 @@ import com.zeitheron.mccue.api.event.RegisterRgbTasksEvent;
 import com.zeitheron.mccue.api.event.UnregisterRgbTasksEvent;
 import com.zeitheron.mccue.api.sdk.IBaseSDK;
 import com.zeitheron.mccue.api.sdk.ICalibrations;
+import com.zeitheron.mccue.api.sdk.IRgbDispatcher;
 import com.zeitheron.mccue.api.sdk.RgbSdkRegistry;
 import com.zeitheron.mccue.client.gui.GuiActionSetup;
 import com.zeitheron.mccue.client.gui.GuiCallibration;
 import com.zeitheron.mccue.client.sdk.corsair.icue.CueSDK;
-import com.zeitheron.mccue.client.sdk.corsair.icue.DeviceInfo;
 import com.zeitheron.mccue.client.sdk.logitech.lew.LogiLED;
 import com.zeitheron.mccue.init.TriggersMC;
 import net.minecraft.client.Minecraft;
@@ -50,7 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
-import java.util.List;
 
 @SideOnly(value = Side.CLIENT)
 public class ClientProxy
@@ -271,7 +270,8 @@ public class ClientProxy
 	{
 		for(IBaseSDK sdk : RgbSdkRegistry.SDKS)
 		{
-			sdk.getDispatcher().reload();
+			IRgbDispatcher dispatcher = sdk.getDispatcher();
+			if(dispatcher != null) dispatcher.reload();
 		}
 	}
 
