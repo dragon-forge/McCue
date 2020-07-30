@@ -27,6 +27,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -462,11 +463,11 @@ public class GuiCreateTask
 	{
 		if(this.sdk != null && this.led != null)
 		{
-			RgbSdkRegistry.getSdk(new ResourceLocation(this.sdk)).createRgbSink(this.led).accept(new int[0]);
+			RgbSdkRegistry.getSdk(new ResourceLocation(this.sdk)).createRgbSink(this.led).ifPresent(c -> c.accept(new int[0]));
 		}
 		this.sdk = info.sdk.getSdkId().toString();
 		this.led = info.led;
-		Consumer<int[]> setter = info.sdk.createRgbSink(info.led);
+		Optional<Consumer<int[]>> setter = info.sdk.createRgbSink(info.led);
 		int[] rgb = new int[3];
 		this.applyAnimation = () ->
 		{
@@ -480,7 +481,7 @@ public class GuiCreateTask
 				rgb[0] = color >> 16 & 255;
 				rgb[1] = color >> 8 & 255;
 				rgb[2] = color >> 0 & 255;
-				setter.accept(rgb);
+				setter.ifPresent(c -> c.accept(rgb));
 			}
 		};
 		this.properties.setString("sdk", this.sdk);

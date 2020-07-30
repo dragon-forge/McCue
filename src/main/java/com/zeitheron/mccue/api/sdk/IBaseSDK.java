@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 
 public interface IBaseSDK
 {
+	boolean isActive();
+
 	ResourceLocation getSdkId();
 
 	String sdkName();
@@ -22,7 +24,7 @@ public interface IBaseSDK
 
 	String dataLedAddress();
 
-	Consumer<int[]> createRgbSink(String var1);
+	Optional<Consumer<int[]>> createRgbSink(String var1);
 
 	ICalibrations calibrations();
 

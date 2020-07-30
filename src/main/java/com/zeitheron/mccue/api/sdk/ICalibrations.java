@@ -4,6 +4,21 @@ import java.util.List;
 
 public interface ICalibrations
 {
+	ICalibrations DUMMY = new ICalibrations()
+	{
+		@Override
+		public boolean hasMoreCalibrations()
+		{
+			return false;
+		}
+
+		@Override
+		public ICalibrationInstance nextCalibration()
+		{
+			return null;
+		}
+	};
+
 	boolean hasMoreCalibrations();
 
 	ICalibrationInstance nextCalibration();

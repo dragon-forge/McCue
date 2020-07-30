@@ -9,7 +9,6 @@ import com.zeitheron.mccue.api.sdk.EnumSDKMode;
 import com.zeitheron.mccue.api.sdk.IRGBPosition;
 import com.zeitheron.mccue.api.sdk.IRgbDispatcher;
 import net.minecraft.nbt.NBTTagCompound;
-import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -110,9 +109,12 @@ public class ICueRgbDispatcher
 		// do not even accept tasks
 		if(!mode.enableEvents()) return;
 
-		CueSDK.ICueSDKColorSink sink = (CueSDK.ICueSDKColorSink) task.colorSink;
-		LedId id = sink.id;
-		QUEUE_LED.put(id, task);
+		task.colorSink.ifPresent(gsink ->
+		{
+			CueSDK.ICueSDKColorSink sink = (CueSDK.ICueSDKColorSink) gsink;
+			LedId id = sink.id;
+			QUEUE_LED.put(id, task);
+		});
 	}
 
 	@Override

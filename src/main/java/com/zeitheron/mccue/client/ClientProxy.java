@@ -20,6 +20,7 @@ import com.zeitheron.mccue.client.gui.GuiActionSetup;
 import com.zeitheron.mccue.client.gui.GuiCallibration;
 import com.zeitheron.mccue.client.sdk.corsair.icue.CueSDK;
 import com.zeitheron.mccue.client.sdk.corsair.icue.DeviceInfo;
+import com.zeitheron.mccue.client.sdk.logitech.lew.LogiLED;
 import com.zeitheron.mccue.init.TriggersMC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -55,7 +56,6 @@ import java.util.List;
 public class ClientProxy
 		extends BaseProxy
 {
-	public static List<DeviceInfo> currentDevices;
 	public static final CommandTreeBase modCommand;
 	UV logo1x1 = new UV(new ResourceLocation("mccue", "textures/logo1x1.png"), 0.0, 0.0, 256.0, 256.0);
 	GuiButton lbtn;
@@ -66,6 +66,12 @@ public class ClientProxy
 		RgbSdkRegistry.registerSDK(() ->
 		{
 			CueSDK sdk = new CueSDK(true);
+			return sdk.isActive() ? sdk : null;
+		});
+
+		RgbSdkRegistry.registerSDK(() ->
+		{
+			LogiLED sdk = new LogiLED();
 			return sdk.isActive() ? sdk : null;
 		});
 

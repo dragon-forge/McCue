@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class RgbTask
@@ -14,9 +15,9 @@ public class RgbTask
 	public RgbAnimator animator;
 	public RgbShader shader;
 	private NBTTagCompound taskData;
-	public final Consumer<int[]> colorSink;
+	public final Optional<Consumer<int[]>> colorSink;
 
-	public RgbTask(@Nonnull RgbTrigger trigger, @Nonnull RgbAnimatorEntry animator, @Nonnull RgbShaderEntry shader, @Nonnull Consumer<int[]> colorSink, @Nullable NBTTagCompound taskData)
+	public RgbTask(@Nonnull RgbTrigger trigger, @Nonnull RgbAnimatorEntry animator, @Nonnull RgbShaderEntry shader, Optional<Consumer<int[]>> colorSink, @Nullable NBTTagCompound taskData)
 	{
 		this.taskData = taskData;
 		this.trigger = trigger;
@@ -39,9 +40,7 @@ public class RgbTask
 	public NBTTagCompound getTaskData()
 	{
 		if(this.taskData == null)
-		{
 			this.taskData = new NBTTagCompound();
-		}
 		return this.taskData;
 	}
 
@@ -49,11 +48,11 @@ public class RgbTask
 	{
 		int[] outData = outputDataFactory.get();
 		this.shader.shadeColor(Math.max(0.0f, Math.min(1.0f, this.animator.supplyBrightness())), outData);
-		this.colorSink.accept(outData);
+		this.colorSink.ifPresent(c -> c.accept(outData));
 	}
 
 	public void resetColor()
 	{
-		this.colorSink.accept(new int[0]);
+		this.colorSink.ifPresent(c -> c.accept(new int[0]));
 	}
 }

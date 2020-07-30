@@ -9,11 +9,6 @@ import java.util.List;
 public interface ICueSDK
 		extends IBaseSDK
 {
-	default boolean isActive()
-	{
-		return false;
-	}
-
 	default int getDeviceCount()
 	{
 		return 0;
@@ -30,6 +25,11 @@ public interface ICueSDK
 	}
 
 	default List<LedPosition> getLedPositions()
+	{
+		return Collections.emptyList();
+	}
+
+	default List<LedPosition> getLedPositions4Device(int deviceIndex)
 	{
 		return Collections.emptyList();
 	}

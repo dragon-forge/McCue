@@ -13,10 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CueSDK
@@ -112,9 +110,24 @@ public class CueSDK
 			CorsairLedPosition[] nativeLedPositions = (CorsairLedPosition[]) pLedPosition.toArray(new CorsairLedPosition[count]);
 			ledPositions.ensureCapacity(count);
 			for(CorsairLedPosition nativeLedPosition : nativeLedPositions)
-			{
 				ledPositions.add(new LedPosition(nativeLedPosition));
-			}
+		}
+		return ledPositions;
+	}
+
+	@Override
+	public List<LedPosition> getLedPositions4Device(int deviceIndex)
+	{
+		CorsairLedPositions corsairLedPositions = this.instance.CorsairGetLedPositionsByDeviceIndex(deviceIndex);
+		ArrayList<LedPosition> ledPositions = new ArrayList<LedPosition>();
+		if(corsairLedPositions != null && corsairLedPositions.numberOfLed > 0)
+		{
+			int count = corsairLedPositions.numberOfLed;
+			CorsairLedPosition.ByReference pLedPosition = corsairLedPositions.pLedPosition;
+			CorsairLedPosition[] nativeLedPositions = (CorsairLedPosition[]) pLedPosition.toArray(new CorsairLedPosition[count]);
+			ledPositions.ensureCapacity(count);
+			for(CorsairLedPosition nativeLedPosition : nativeLedPositions)
+				ledPositions.add(new LedPosition(nativeLedPosition));
 		}
 		return ledPositions;
 	}
@@ -203,14 +216,14 @@ public class CueSDK
 	}
 
 	@Override
-	public Consumer<int[]> createRgbSink(String led)
+	public Optional<Consumer<int[]>> createRgbSink(String led)
 	{
 		try
 		{
-			return new ICueSDKColorSink(this, LedId.valueOf(led));
+			return Optional.of(new ICueSDKColorSink(this, LedId.valueOf(led)));
 		} catch(Throwable err)
 		{
-			return null;
+			return Optional.empty();
 		}
 	}
 

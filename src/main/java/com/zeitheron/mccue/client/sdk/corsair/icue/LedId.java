@@ -952,6 +952,10 @@ public enum LedId implements IRGBPosition
 			{
 				return DeviceType.CDT_MemoryModule;
 			}
+			case "H":
+			{
+				return DeviceType.CDT_Headset;
+			}
 		}
 		return DeviceType.CDT_Unknown;
 	}

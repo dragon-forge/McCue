@@ -9,6 +9,7 @@ import java.util.Optional;
 public class KnownRGBSDK
 {
 	public static final ResourceLocation CORSAIR_CUE = new ResourceLocation("mccue", "icue");
+	public static final ResourceLocation LOGITECH_LED = new ResourceLocation("mccue", "logiled");
 
 	public static Optional<IBaseSDK> get(ResourceLocation id)
 	{

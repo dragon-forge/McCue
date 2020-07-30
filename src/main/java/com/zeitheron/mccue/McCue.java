@@ -15,12 +15,15 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
 @Mod(modid = "mccue", name = "Mc Cue", version = "1r", certificateFingerprint = "9f5e2a811a8332a842b34f6967b7db0ac4f24856", dependencies = "required-after:hammercore", updateJSON = "http://dccg.herokuapp.com/api/fmluc/341357")
 public class McCue
 {
+	public static final Logger LOG = LogManager.getLogger("McCue");
 	public static File modCfgDir;
 
 	@SidedProxy(serverSide = "com.zeitheron.mccue.BaseProxy", clientSide = "com.zeitheron.mccue.client.ClientProxy")

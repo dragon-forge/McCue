@@ -1,7 +1,6 @@
 #Project info
 author=Zeitheron
-start_git_commit=?
-git_commit=https://gitlab.com/Zeitheron/???/commit/{{hash}}
+start_git_commit=3376e578608a0d347bc630926e027b27cea71aab
 
 #Runtime info
 forge_version=14.23.5.2847
@@ -14,6 +13,6 @@ jei_version=4.11.0.206
 mod_id=mccue
 mod_id_fancy=McCue
 mod_name=Corsair McCue
-mod_version=12.2.3
+mod_version=12.2.4
 cf_project=341357
 release_type=release
