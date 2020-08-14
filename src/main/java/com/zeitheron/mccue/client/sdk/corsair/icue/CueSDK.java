@@ -54,7 +54,7 @@ public class CueSDK
 			System.err.println("Incompatible SDK (" + sdkVersion + ") and CUE " + cueVersion + " versions.");
 			this.active = false;
 		}
-		if(exclusiveLightingControl && this.instance.CorsairRequestControl(0) != 1)
+		if(exclusiveLightingControl && !this.instance.CorsairRequestControl(0))
 			this.handleError();
 		CUESDKLibrary.INSTANCE.CorsairSubscribeForEvents((ctx, evt) ->
 		{
@@ -91,7 +91,7 @@ public class CueSDK
 	@Override
 	public List<DeviceInfo> getDevices()
 	{
-		ArrayList<DeviceInfo> devices = new ArrayList<DeviceInfo>();
+		ArrayList<DeviceInfo> devices = new ArrayList<>();
 		int c = this.getDeviceCount();
 		for(int i = 0; i < c; ++i)
 		{
@@ -162,11 +162,8 @@ public class CueSDK
 				ledColor = iterator.next();
 				this.copyCorsairLedColor(ledColor, nativeLedColors[index++]);
 			}
-			byte ret = this.instance.CorsairSetLedsColors(nativeLedColors.length, nativeLedColors[0]);
-			if(ret != 1)
-			{
+			if(!this.instance.CorsairSetLedsColors(nativeLedColors.length, nativeLedColors[0]))
 				this.handleError();
-			}
 		}
 	}
 
@@ -174,28 +171,21 @@ public class CueSDK
 	public void setLedColor(LedColor ledColor)
 	{
 		if(ledColor == null)
-		{
 			return;
-		}
 		CorsairLedColor nativeLedColor = new CorsairLedColor();
 		this.copyCorsairLedColor(ledColor, nativeLedColor);
-		byte ret = this.instance.CorsairSetLedsColors(1, nativeLedColor);
-		if(ret != 1)
-		{
+		if(!this.instance.CorsairSetLedsColors(1, nativeLedColor))
 			this.handleError();
-		}
 	}
 
 	@Override
 	public boolean setLedColorSafe(LedColor ledColor)
 	{
 		if(ledColor == null)
-		{
 			return false;
-		}
 		CorsairLedColor nativeLedColor = new CorsairLedColor();
 		this.copyCorsairLedColor(ledColor, nativeLedColor);
-		return this.instance.CorsairSetLedsColors(1, nativeLedColor) == 1;
+		return this.instance.CorsairSetLedsColors(1, nativeLedColor);
 	}
 
 	private void copyCorsairLedColor(LedColor src, CorsairLedColor dst)

@@ -14,19 +14,19 @@ public interface CUESDKLibrary
 	CUESDKLibrary INSTANCE = Native.loadLibrary("CUESDK", CUESDKLibrary.class);
 	int CORSAIR_DEVICE_ID_MAX = 128;
 
-	byte CorsairSetLedsColors(int var1, CorsairLedColor var2);
+	boolean CorsairSetLedsColors(int var1, CorsairLedColor var2);
 
-	byte CorsairSetLedsColorsBufferByDeviceIndex(int var1, int var2, CorsairLedColor var3);
+	boolean CorsairSetLedsColorsBufferByDeviceIndex(int var1, int var2, CorsairLedColor var3);
 
-	byte CorsairSetLedsColorsFlushBuffer();
+	boolean CorsairSetLedsColorsFlushBuffer();
 
-	byte CorsairSetLedsColorsFlushBufferAsync(CorsairSetLedsColorsFlushBufferAsync_callback_callback var1, Pointer var2);
+	boolean CorsairSetLedsColorsFlushBufferAsync(CorsairSetLedsColorsFlushBufferAsync_callback_callback var1, Pointer var2);
 
-	byte CorsairGetLedsColors(int var1, CorsairLedColor var2);
+	boolean CorsairGetLedsColors(int var1, CorsairLedColor var2);
 
-	byte CorsairGetLedsColorsByDeviceIndex(int var1, int var2, CorsairLedColor var3);
+	boolean CorsairGetLedsColorsByDeviceIndex(int var1, int var2, CorsairLedColor var3);
 
-	byte CorsairSetLedsColorsAsync(int var1, CorsairLedColor var2, CorsairSetLedsColorsAsync_CallbackType_callback var3, Pointer var4);
+	boolean CorsairSetLedsColorsAsync(int var1, CorsairLedColor var2, CorsairSetLedsColorsAsync_CallbackType_callback var3, Pointer var4);
 
 	int CorsairGetDeviceCount();
 
@@ -38,31 +38,31 @@ public interface CUESDKLibrary
 
 	int CorsairGetLedIdForKeyName(byte var1);
 
-	byte CorsairRequestControl(int var1);
+	boolean CorsairRequestControl(int var1);
 
 	CorsairProtocolDetails.ByValue CorsairPerformProtocolHandshake();
 
 	int CorsairGetLastError();
 
-	byte CorsairReleaseControl(int var1);
+	boolean CorsairReleaseControl(int var1);
 
-	byte CorsairSetLayerPriority(int var1);
+	boolean CorsairSetLayerPriority(int var1);
 
-	byte CorsairRegisterKeypressCallback(CorsairRegisterKeypressCallback_CallbackType_callback var1, Pointer var2);
-
-	@Deprecated
-	byte CorsairGetBoolPropertyValue(int var1, int var2, Pointer var3);
-
-	byte CorsairGetBoolPropertyValue(int var1, int var2, ByteBuffer var3);
+	boolean CorsairRegisterKeypressCallback(CorsairRegisterKeypressCallback_CallbackType_callback var1, Pointer var2);
 
 	@Deprecated
-	byte CorsairGetInt32PropertyValue(int var1, int var2, IntByReference var3);
+	boolean CorsairGetBoolPropertyValue(int var1, int var2, Pointer var3);
 
-	byte CorsairGetInt32PropertyValue(int var1, int var2, IntBuffer var3);
+	boolean CorsairGetBoolPropertyValue(int var1, int var2, ByteBuffer var3);
 
-	byte CorsairSubscribeForEvents(CorsairEventHandler var1, Pointer var2);
+	@Deprecated
+	boolean CorsairGetInt32PropertyValue(int var1, int var2, IntByReference var3);
 
-	byte CorsairUnsubscribeFromEvents();
+	boolean CorsairGetInt32PropertyValue(int var1, int var2, IntBuffer var3);
+
+	boolean CorsairSubscribeForEvents(CorsairEventHandler var1, Pointer var2);
+
+	boolean CorsairUnsubscribeFromEvents();
 
 	class CorsairKeyId
 			extends PointerType
@@ -205,5 +205,7 @@ public interface CUESDKLibrary
 		int CDT_LightingNodePro = 7;
 		int CDT_MemoryModule = 8;
 		int CDT_Cooler = 9;
+		int CDT_Motherboard = 10;
+		int CDT_GraphicsCard = 11;
 	}
 }

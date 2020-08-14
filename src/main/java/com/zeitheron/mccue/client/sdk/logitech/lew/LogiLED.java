@@ -46,7 +46,7 @@ public class LogiLED
 		} catch(Throwable err)
 		{
 			active = false;
-			McCue.LOG.error("Failed to load Logitech RGB support", err);
+			McCue.LOG.error("Logitech RGB error: "  + err.getMessage());
 		}
 	}
 
