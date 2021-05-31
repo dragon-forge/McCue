@@ -31,7 +31,7 @@ configFile.withReader {
 }
 
 version = "${config.mod_version}"
-group = "tk.zeitheron.${config.mod_id}"
+group = "org.zeith.${config.mod_id}"
 archivesBaseName = "${config.mod_id_fancy}-${config.minecraft_version}"
 
 sourceCompatibility = targetCompatibility = "1.8"

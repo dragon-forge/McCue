@@ -62,6 +62,8 @@ corsair.mousemat=RGB Mouse Pad
 corsair.headsetstand=RGB Headset Stand
 corsair.headset=RGB Headset
 corsair.memorymodule=RGB DRAM
+corsair.motherboard=RGB Motherboard
+corsair.gpu=RGB GPU
 corsair.unknown=Unkn. RGB Device
 
 logic.mccue:true=§aTRUE
