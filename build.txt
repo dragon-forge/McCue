@@ -6,13 +6,13 @@ start_git_commit=3376e578608a0d347bc630926e027b27cea71aab
 forge_version=14.23.5.2847
 minecraft_version=1.12.2
 mcp=stable_39
-hl_version=2.0.6.26
+hl_version=2.0.6.34
 jei_version=4.11.0.206
 
 #Mod info
 mod_id=mccue
 mod_id_fancy=McCue
 mod_name=Corsair McCue
-mod_version=12.4.7
+mod_version=12.4.9
 cf_project=341357
 release_type=release

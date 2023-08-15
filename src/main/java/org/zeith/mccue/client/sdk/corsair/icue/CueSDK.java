@@ -5,7 +5,7 @@ import com.zeitheron.hammercore.cfg.file1132.Configuration;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import org.zeith.mccue.McCue;
-import org.zeith.mccue.api.KnownRGBSDK;
+import org.zeith.mccue.api.*;
 import org.zeith.mccue.api.sdk.ICalibrations;
 import org.zeith.mccue.api.sdk.IRgbDispatcher;
 import org.zeith.mccue.api.sdk.RgbSdkRegistry;
@@ -30,20 +30,20 @@ public class CueSDK
 	public List<DeviceInfo> currentDevices;
 	List<LedColor> ledQueue = new ArrayList<LedColor>();
 	ResourceLocation id = KnownRGBSDK.CORSAIR_CUE;
-
+	
 	public CueSDK(Configuration cfg)
 	{
 		this(false, cfg);
 	}
-
+	
 	public CueSDK(boolean exclusiveLightingControl, Configuration cfg)
 	{
-		if(!RgbSdkRegistry.enableSDK(cfg, this))
+		if(!RgbSdkRegistry.enableSDK(cfg, this) || !McCueToggles.initICUESdk)
 		{
 			active = false;
 			return;
 		}
-
+		
 		CorsairProtocolDetails.ByValue protocolDetails = this.instance.CorsairPerformProtocolHandshake();
 		if(protocolDetails.serverProtocolVersion == 0)
 			this.handleError();
@@ -81,13 +81,13 @@ public class CueSDK
 		this.getDevices().forEach(this.presets::calibrate);
 		icueInstance = this;
 	}
-
+	
 	@Override
 	public int getDeviceCount()
 	{
 		return this.instance.CorsairGetDeviceCount();
 	}
-
+	
 	@Override
 	public List<DeviceInfo> getDevices()
 	{
@@ -96,13 +96,13 @@ public class CueSDK
 		for(int i = 0; i < c; ++i) devices.add(this.getDeviceInfo(i));
 		return devices;
 	}
-
+	
 	@Override
 	public DeviceInfo getDeviceInfo(int deviceIndex)
 	{
 		return new DeviceInfo(deviceIndex, this.instance.CorsairGetDeviceInfo(deviceIndex));
 	}
-
+	
 	@Override
 	public List<LedPosition> getLedPositions()
 	{
@@ -119,7 +119,7 @@ public class CueSDK
 		}
 		return ledPositions;
 	}
-
+	
 	@Override
 	public List<LedPosition> getLedPositions4Device(int deviceIndex)
 	{
@@ -136,7 +136,7 @@ public class CueSDK
 		}
 		return ledPositions;
 	}
-
+	
 	@Override
 	public void setLedsColors(Collection<LedColor> ledColors)
 	{
@@ -163,7 +163,7 @@ public class CueSDK
 				this.handleError();
 		}
 	}
-
+	
 	@Override
 	public void setLedColor(LedColor ledColor)
 	{
@@ -174,7 +174,7 @@ public class CueSDK
 		if(!this.instance.CorsairSetLedsColors(1, nativeLedColor))
 			this.handleError();
 	}
-
+	
 	@Override
 	public boolean setLedColorSafe(LedColor ledColor)
 	{
@@ -184,7 +184,7 @@ public class CueSDK
 		this.copyCorsairLedColor(ledColor, nativeLedColor);
 		return this.instance.CorsairSetLedsColors(1, nativeLedColor);
 	}
-
+	
 	private void copyCorsairLedColor(LedColor src, CorsairLedColor dst)
 	{
 		dst.ledId = src.ledId;
@@ -192,7 +192,7 @@ public class CueSDK
 		dst.g = src.g;
 		dst.b = src.b;
 	}
-
+	
 	private void handleError()
 	{
 		int errorId = this.instance.CorsairGetLastError();
@@ -203,13 +203,13 @@ public class CueSDK
 			System.out.println(error);
 		}
 	}
-
+	
 	@Override
 	public boolean isActive()
 	{
 		return this.active;
 	}
-
+	
 	@Override
 	public Optional<Consumer<int[]>> createRgbSink(String led)
 	{
@@ -221,26 +221,26 @@ public class CueSDK
 			return Optional.empty();
 		}
 	}
-
+	
 	@Override
 	public void queueLed(LedColor color)
 	{
 		this.ledQueue.add(color);
 	}
-
+	
 	@Override
 	public void flushLedQueue()
 	{
 		this.setLedsColors(this.ledQueue);
 		this.ledQueue.clear();
 	}
-
+	
 	@Override
 	public IRgbDispatcher getDispatcher()
 	{
 		return this.dispatcher;
 	}
-
+	
 	@Override
 	public String getPeripheralByLed(String led)
 	{
@@ -253,45 +253,45 @@ public class CueSDK
 			return ICueSDK.super.getPeripheralByLed(led);
 		}
 	}
-
+	
 	@Override
 	public String sdkName()
 	{
 		return "Corsair iCue";
 	}
-
+	
 	@Override
 	public List<String> getAllLeds()
 	{
 		return this.presets.leds();
 	}
-
+	
 	@Override
 	public String dataLedAddress()
 	{
 		return "ICUE_led";
 	}
-
+	
 	@Override
 	public ICalibrations calibrations()
 	{
 		return this.presets;
 	}
-
+	
 	@Override
 	public ResourceLocation getSdkId()
 	{
 		return this.id;
 	}
-
+	
 	SDKControlStack theStack;
-
+	
 	@Override
 	public SDKControlStack getActiveStack()
 	{
 		return theStack;
 	}
-
+	
 	@Override
 	public void setActiveStack(SDKControlStack stack)
 	{
@@ -300,21 +300,21 @@ public class CueSDK
 		else if(stack == null && theStack.isClosed())
 			theStack = null;
 	}
-
+	
 	public static class ICueSDKColorSink
 			implements Consumer<int[]>
 	{
 		public final CorsairLedId id;
 		public final LedColor led;
 		public final CueSDK sdk;
-
+		
 		public ICueSDKColorSink(CueSDK sdk, CorsairLedId id)
 		{
 			this.sdk = sdk;
 			this.id = id;
 			this.led = new LedColor(id, Color.BLACK);
 		}
-
+		
 		@Override
 		public void accept(int[] color)
 		{

@@ -6,6 +6,7 @@ import com.zeitheron.hammercore.client.utils.UtilsFX;
 import com.zeitheron.hammercore.utils.color.ColorHelper;
 import org.zeith.mccue.BaseProxy;
 import org.zeith.mccue.McCue;
+import org.zeith.mccue.api.McCueToggles;
 import org.zeith.mccue.api.base.RgbRegistry;
 import org.zeith.mccue.api.base.RgbTaskEntry;
 import org.zeith.mccue.api.base.RgbTrigger;
@@ -52,14 +53,34 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 
-@SideOnly(value = Side.CLIENT)
+@SideOnly(Side.CLIENT)
 public class ClientProxy
 		extends BaseProxy
 {
-	public static final CommandTreeBase modCommand;
+	public static final CommandTreeBase modCommand = new CommandTreeBase()
+	{
+		@Override
+		public String getUsage(ICommandSender sender)
+		{
+			return "mccue";
+		}
+		
+		@Override
+		public String getName()
+		{
+			return "mccue";
+		}
+		
+		@Override
+		public int getRequiredPermissionLevel()
+		{
+			return 0;
+		}
+	};
+	
 	UV logo1x1 = new UV(new ResourceLocation("mccue", "textures/logo1x1.png"), 0.0, 0.0, 256.0, 256.0);
 	GuiButton lbtn;
-
+	
 	@Override
 	public void a()
 	{
@@ -68,13 +89,13 @@ public class ClientProxy
 			CueSDK sdk = new CueSDK(true, cfg);
 			return sdk.isActive() ? sdk : null;
 		});
-
+		
 		RgbSdkRegistry.registerSDK(cfg ->
 		{
 			LogiLED sdk = new LogiLED(cfg);
 			return sdk.isActive() ? sdk : null;
 		});
-
+		
 		modCommand.addSubcommand(ISimpleCommand.create(0, "reload", (server, sender, args) ->
 		{
 			TextComponentString comp = new TextComponentString("Reloading RGB..");
@@ -86,16 +107,16 @@ public class ClientProxy
 			sender.sendMessage(comp);
 		}));
 	}
-
+	
 	@Override
 	public void b()
 	{
 		Configuration cfg = new Configuration(new File(McCue.modCfgDir, "main.hlc"));
 		RgbSdkRegistry.init(cfg);
 		if(cfg.hasChanged()) cfg.save();
-
+		
 		RgbRegistry.masterReload();
-
+		
 		Thread thread = new Thread(() ->
 		{
 			do
@@ -114,21 +135,25 @@ public class ClientProxy
 				ClientProxy.$(15L);
 			} while(true);
 		}, "McCueRGBSync");
-
+		
 		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.setDaemon(true);
 		thread.start();
-
-		ClientCommandHandler.instance.registerCommand(modCommand);
-
-		GuiCell.register(Boolean.TYPE, GuiLogicalCell::new);
-		GuiCell.register(Boolean.class, GuiLogicalCell::new);
-		GuiCell.register(Color.class, GuiSelColCell::new);
+		
+		if(!McCueToggles.mcCUEAsLibrary)
+		{
+			ClientCommandHandler.instance.registerCommand(modCommand);
+			
+			GuiCell.register(Boolean.TYPE, GuiLogicalCell::new);
+			GuiCell.register(Boolean.class, GuiLogicalCell::new);
+			GuiCell.register(Color.class, GuiSelColCell::new);
+		}
 	}
-
+	
 	@SubscribeEvent
 	public void initGui(GuiScreenEvent.InitGuiEvent.Post e)
 	{
+		if(McCueToggles.mcCUEAsLibrary) return;
 		final GuiScreen g = e.getGui();
 		if(g instanceof GuiOptions)
 		{
@@ -148,13 +173,17 @@ public class ClientProxy
 						FontRenderer fontrenderer = mc.fontRenderer;
 						mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
 						GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-						this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+						this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width &&
+								mouseY < this.y + this.height;
 						int i = this.getHoverState(this.hovered);
 						GlStateManager.enableBlend();
 						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 						GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 						this.drawTexturedModalRect(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-						this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+						this.drawTexturedModalRect(
+								this.x + this.width / 2, this.y,
+								200 - this.width / 2, 46 + i * 20, this.width / 2, this.height
+						);
 						this.mouseDragged(mc, mouseX, mouseY);
 						int j = 14737632;
 						if(this.packedFGColour != 0)
@@ -167,11 +196,16 @@ public class ClientProxy
 						{
 							j = 16777120;
 						}
-						if(RgbSdkRegistry.SDKS.stream().map(IBaseSDK::calibrations).anyMatch(ICalibrations::hasMoreCalibrations))
+						if(RgbSdkRegistry.SDKS.stream().map(IBaseSDK::calibrations)
+								.anyMatch(ICalibrations::hasMoreCalibrations))
 						{
 							GlStateManager.pushMatrix();
-							GlStateManager.translate(0.0f, (float) Math.sin(Math.toRadians((float) (System.currentTimeMillis() % 1800L) / 10.0f)) * 4.0f, 0.0f);
-							fontrenderer.drawString("!!!", this.x + this.width + 1, this.y + (this.height - fontrenderer.FONT_HEIGHT) / 2 - 1, ColorHelper.interpolate(j, 16711680, 0.5f));
+							GlStateManager.translate(0.0f, (float) Math.sin(Math.toRadians(
+									(float) (System.currentTimeMillis() % 1800L) / 10.0f)) * 4.0f, 0.0f);
+							fontrenderer.drawString("!!!",
+									this.x + this.width + 1, this.y + (this.height - fontrenderer.FONT_HEIGHT) / 2 -
+											1, ColorHelper.interpolate(j, 16711680, 0.5f)
+							);
 							GlStateManager.popMatrix();
 						}
 						ColorHelper.glColor1i(j);
@@ -184,19 +218,21 @@ public class ClientProxy
 					}
 				}
 			};
-
+			
 			e.getButtonList().add(mccue);
 			mccue.enabled = !RgbSdkRegistry.SDKS.isEmpty();
 		}
 	}
-
+	
 	@SubscribeEvent
 	public void actionPerformed(GuiScreenEvent.ActionPerformedEvent e)
 	{
+		if(McCueToggles.mcCUEAsLibrary) return;
 		TriggersMC.ACTION_PERFORMED.trigger(null);
 		if(this.lbtn == e.getButton())
 		{
-			ICalibrations uncalibrated = RgbSdkRegistry.SDKS.stream().map(sdk -> sdk.calibrations()).filter(ICalibrations::hasMoreCalibrations).findFirst().orElse(null);
+			ICalibrations uncalibrated = RgbSdkRegistry.SDKS.stream().map(sdk -> sdk.calibrations())
+					.filter(ICalibrations::hasMoreCalibrations).findFirst().orElse(null);
 			if(uncalibrated != null)
 			{
 				Minecraft.getMinecraft().displayGuiScreen(new GuiCallibration(e.getGui(), uncalibrated));
@@ -206,7 +242,7 @@ public class ClientProxy
 			}
 		}
 	}
-
+	
 	public static void saveTasks()
 	{
 		File taskFile = new File(McCue.modCfgDir, "tasks.dat");
@@ -222,14 +258,14 @@ public class ClientProxy
 			// empty catch block
 		}
 	}
-
+	
 	@SubscribeEvent
 	public void registerRgb(RegisterRgbTasksEvent e)
 	{
 		File taskFile = new File(McCue.modCfgDir, "tasks.dat");
-		try
+		try(FileInputStream in = new FileInputStream(taskFile))
 		{
-			NBTTagCompound comp = CompressedStreamTools.readCompressed(new FileInputStream(taskFile));
+			NBTTagCompound comp = CompressedStreamTools.readCompressed(in);
 			NBTTagList tasks = comp.getTagList("TaskEntries", 10);
 			for(int i = 0; i < tasks.tagCount(); ++i)
 			{
@@ -243,13 +279,13 @@ public class ClientProxy
 			// empty catch block
 		}
 	}
-
+	
 	@SubscribeEvent
 	public void saveRgb(UnregisterRgbTasksEvent e)
 	{
 		ClientProxy.saveTasks();
 	}
-
+	
 	@Override
 	public void a(RgbTrigger a, @Nullable NBTTagCompound b)
 	{
@@ -258,7 +294,7 @@ public class ClientProxy
 			sdk.getDispatcher().onTrigger(a, b);
 		}
 	}
-
+	
 	public static void $(long ms)
 	{
 		try
@@ -269,7 +305,7 @@ public class ClientProxy
 			// empty catch block
 		}
 	}
-
+	
 	@Override
 	public void d()
 	{
@@ -278,29 +314,5 @@ public class ClientProxy
 			IRgbDispatcher dispatcher = sdk.getDispatcher();
 			if(dispatcher != null) dispatcher.reload();
 		}
-	}
-
-	static
-	{
-		modCommand = new CommandTreeBase()
-		{
-			@Override
-			public String getUsage(ICommandSender sender)
-			{
-				return "mccue";
-			}
-
-			@Override
-			public String getName()
-			{
-				return "mccue";
-			}
-
-			@Override
-			public int getRequiredPermissionLevel()
-			{
-				return 0;
-			}
-		};
 	}
 }
