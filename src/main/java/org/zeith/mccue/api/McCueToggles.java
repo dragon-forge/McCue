@@ -11,4 +11,5 @@ public class McCueToggles
 	
 	public static boolean initLogiLEDSdk = true;
 	public static boolean initICUESdk = true;
+	public static boolean initRazerChromaSdk = true;
 }

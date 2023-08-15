@@ -14,8 +14,8 @@ public interface LogiLedLibrary
 		extends Library
 {
 	String JNA_LIBRARY_NAME = "LogitechLedEnginesWrapper";
-	NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance("LogitechLedEnginesWrapper");
-	LogiLedLibrary INSTANCE = Native.loadLibrary("LogitechLedEnginesWrapper", LogiLedLibrary.class);
+	NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(JNA_LIBRARY_NAME);
+	LogiLedLibrary INSTANCE = Native.loadLibrary(JNA_LIBRARY_NAME, LogiLedLibrary.class);
 	
 	int
 			ESC = 0x01,

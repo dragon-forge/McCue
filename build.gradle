@@ -123,6 +123,7 @@ curseforge {
 		changelog = file('changelog.html')
 		releaseType = "${config.release_type}"
 		addGameVersion "${config.minecraft_version}"
+		addGameVersion "Forge"
 		mainArtifact(jar) {
 		  displayName = "[${config.minecraft_version}] ${config.mod_name} - ${config.mod_version}"
 		}

@@ -1,0 +1,9 @@
+{
+  "_comment": "This is an example JSON that you should feed into JAppInfoType",
+
+  "title": "Corsair McCUE",
+  "description": "Minecraft mod to bridge RGB software with the game.",
+  "author": "Zeitheron",
+  "url": "https://www.curseforge.com/projects/341357",
+  "supported_device": 63
+}
