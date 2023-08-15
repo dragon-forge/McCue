@@ -34,7 +34,7 @@ public class JAppInfoType
 					.setAuthorName(getField(obj, "author", 256))
 					.setAuthorContact(getField(obj, "url", 256));
 			app.supportedDevice = obj.getInt("supported_device");
-			app.category = 2;
+			app.category = obj.optInt("category", 2);
 			return app;
 		} catch(IOException e)
 		{

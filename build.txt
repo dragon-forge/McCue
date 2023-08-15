@@ -13,6 +13,6 @@ jei_version=4.11.0.206
 mod_id=mccue
 mod_id_fancy=McCue
 mod_name=Corsair McCue
-mod_version=12.4.9
+mod_version=12.4.10
 cf_project=341357
 release_type=release
